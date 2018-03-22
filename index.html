@@ -10,8 +10,8 @@
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     
 </head>
 <body>
@@ -19,16 +19,20 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle"></h5>
+                <h5 class="modal-title" id="modal-title"></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <ul class="list-inline" id="characterList"></ul>
+                <div class="container-fluid" id="modal-list-container">
+                    <div class="row" id="row-0"></div>
+                    <br>
+                    <div class="row" id="row-1"></div>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Select</button>
+            <div class="modal-footer" id="modal-footer">
+                <button type="button" id="modal-submit" class="btn btn-success" style="visibility: hidden;" data-dismiss="modal">Select</button>
             </div>
             </div>
         </div>
@@ -36,7 +40,7 @@
 
     <div class="container">
         <h1 class="main-heading text-center">Pokemon Game</h1>
-        <div class="row">
+        <div class="row row-eq-height">
             <div class="col-4 character">
                 <div class="image-container text-center">
                     <img class="character-title" id="character-name" src=""></h2>
@@ -44,22 +48,22 @@
                 </div>
                 <div class="button-container text-center">
                     <br>
-                    <button type="button" class="btn btn-success" id="clickToSelect" data-toggle="modal" data-target="#characterSelect">
-                            Select Character
-                    </button>
-                    <br>
+                    <div id="selectCharacter">
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#characterSelect">
+                                Select Character
+                        </button>
+                    </div>
+                <br>
                 </div>
-                <div class="text-container">
-                    <h3>HP: <span id="currentCharHP"></span>   <span id="characterDamage"></span></h3>
-                    <h3>Attack: <span id="charAttack"></span></h3>
-                </div>
+                
             </div>
 
             <div class="col-4 middle">
                 <div class="container text-center">
-                    <img class="mx-auto vs-title" src="assets/images/VS.png">
-                    <h4>Last Attack Dealt <span id="currentAttack"> </span> Damage!</h4>
-                    <button class="btn btn-success">Attack!</button>
+                    <h2 id="sec-heading" style="color:#4caf50">Please Select Your Character!</h2>
+                    <div id="button-container" class="align-text-bottom">
+                        <button type="button" class="btn btn-warning" id="attack-button" style="visibility:hidden;">Attack!</button>
+                    </div>
                 </div>
             </div>
 
@@ -68,15 +72,25 @@
                     <h2 class="text-center character-title" id="enemy-name"></h2>
                     <img class="mx-auto character-image" id="enemy-image" src="http://via.placeholder.com/200x200" style="width: 200px; height: 200px">
                 </div>
-                <div class="text-container">
-                    <h3>HP: <span id="enemyCharHP"></span>   <span id="enemyDamage"></span></h3>
-                    <h3>Attack: <span id="ememyAttack"></span></h3>
+                <div class="button-container text-center">
+                    <br>
+                    <div id="selectEnemy">
+                        <button type="button" class="btn btn-danger" id ="enemy-button" data-toggle="modal" data-target="#characterSelect" style="visibility: hidden;" >
+                                Select Enemy
+                        </button>
+                    </div>
+                    
+                    <br>
                 </div>
             </div>
         </div>
 
         <div class="row">
             <div class="col-6">
+                <div class="character-text-container">
+                    <h3>HP: <span id="currentCharHP"></span>   <span id="characterDamage"></span></h3>
+                    <h3>Attack: <span id="charAttack"></span></h3>
+                </div>
                 <div class="card">
                     <div class="card-header">Enemies Captured</div>
                     <div class="card-body">
@@ -87,6 +101,10 @@
                 </div>
             </div>
             <div class="col-6">
+                <div class="enemy-text-container">
+                    <h3>HP: <span id="currentCharHP"></span>   <span id="characterDamage"></span></h3>
+                    <h3>Attack: <span id="charAttack"></span></h3>
+                </div>
                 <div class="card">
                     <div class="card-header">Enemies Left:</div>
                     <div class="card-body">

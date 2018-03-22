@@ -1,0 +1,13 @@
+.characters {
+    height: 180px;
+    width: 180px;
+}
+
+.enemies {
+    height: 150px;
+    width: 150px;
+}
+
+.middle #button-container {
+    margin-top: 20%;
+}
