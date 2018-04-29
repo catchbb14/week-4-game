@@ -1,142 +1,226 @@
-$(document).ready( function() {
-    
-    var enemiesToFight = [];
-    var enemiesFought = [];
-    var characterSelected;
-    var enemySelected;
-    var characterChosen = false;
-    var charNum;
-    var enemNum;
+   
 
-    class Pokemon {
-        constructor(name, title, imagePath, hp, attack, counter) {
-            this.name = name;
-            this.title = title;
-            this.imagePath = imagePath;
-            this.hp = hp;
-            this.attack = attack;
-            this.counter = counter;
-            this.chosen = false;
+    function Pokemon(name, nameTag, imagePath, hp, baseAttack, counter) {
+        this.name = name;
+        this.nameTag = nameTag;
+        this.imagePath = imagePath;
+        this.hp = hp;
+        this.baseAttack = baseAttack;
+        this.counter = counter;
+        this.attack = baseAttack;
+        this.attackEnemy = function(enemy) {
+            enemy.hp -= this.attack;
+            this.attack += this.baseAttack;
+            return enemy.isAlive();
         }
+        this.attackYou = function(friendly) {
+            friendly.hp -= this.counter;
+        }
+        this.isAlive = function() {
+            if(this.hp > 0) { return true; }
+            return false;
+        }
+    }
 
-        attack(enemy) {
-            displayAttack(this.attack);
-        }
+    var pikachu = {};
+    var charmander = {};
+    var bulbasaur = {};
+    var squirtle = {};
+
+    var characterList = [];
+    var enemyList = [];
+    var defeated = [];
+    var yourPokemon;
+    var enemyPokemon;  
+
+    function resetGame() {
+        pikachu = new Pokemon("Pikachu", "assets/images/pikachu-name.png", "assets/images/pikachu.png", 120, 8, 15);
+        charmander = new Pokemon("Charmander", "assets/images/charmander-name.png", "assets/images/charmander.png", 100, 15, 5);
+        bulbasaur = new Pokemon("Bulbasaur", "assets/images/bulbasaur-name.png", "assets/images/bulbasaur.png", 150, 9, 20);
+        squirtle = new Pokemon("Squirtle", "assets/images/squirtle-name.png", "assets/images/squirtle.png", 180, 6, 25);
+
+        characterList = [pikachu, charmander, bulbasaur, squirtle];
+        enemyList = [];
+        defeated = [];
+        
+        $("#player").toggle();
+        updateCaptured();
+        updateEnemiesLeft();
+        updateStats();
+
+        $("#sec-heading").text("Please Select Your Character!");
+
+        
+        $("#player-image").attr("src", "http://via.placeholder.com/200x200");
+        $("#enemy-image").attr("src", "http://via.placeholder.com/200x200");
+
+        $("#character-name").css("visibility", "hidden");
+        $("#enemy-name").css("visibility", "hidden");
 
     }
 
-          
-
-    var pikachu = new Pokemon("Pikachu", "assets/images/pikachu-name.png", "assets/images/pikachu.png", 120, 8, 15);
-    var charmander = new Pokemon("Charmander", "assets/images/charmander-name.png", "assets/images/charmander.png", 100, 15, 5);
-    var bulbasaur = new Pokemon("Bulbasaur", "assets/images/bulbasaur-name.png", "assets/images/bulbasaur.png", 150, 9, 20);
-    var squirtle = new Pokemon("Squirtle", "assets/images/squirtle-name.png", "assets/images/squirtle.png", 180, 6, 25);
-
-    var characterList = [pikachu, charmander, bulbasaur, squirtle];
-    var modalList = characterList.slice(0);
-
-    modalList.forEach( function(item, index) {
-        var row = "#row-" + Math.floor(index/2);
-        var openTag = '<div class="col-6 ml-auto" id="char-' + index + '">';
-        var image = '<img src="' + item.imagePath + '" class="img-responsive characters" id="charImg-' + index + '" />';
-        $(row).append(openTag + image + "<div>");
-        $("#modal-title").text("Choose Your Pokemon!");
-    });
-
-    function removeCharacter() {
-        modalList = modalList.filter( function(char) {
-            return !(char.chosen);
-        });
-        updateModal();
-    }
-
-    function updateModal() {
-        $("#modal-title").text("Choose Your Enemy!");
+    function updateFriendlyModal() {
+        $('.modal-header').text('Select your character!');
+        var characterDisplay = '';
+        characterList.forEach( function(pokemon) {
+            characterDisplay += `<img class="pokemon-thumbnail" src="${pokemon.imagePath}" data-name="${pokemon.name}">`    
+        })
         $("#modal-list-container").empty();
-        
-        $("#modal-list-container").html("<div class='row' id='enemies'></div>");
-        $("#modal-footer").empty();
-        $("#modal-footer").html('<button type="button" id="enemy-button" class="btn btn-danger" style="visibility: hidden;" data-dismiss="modal">Fight!</button>');
-        modalList.forEach( function(item, index) {
-            var openTag = '<div class="col-4 ml-auto" id="enemy-' + index + '">';
-            var image = '<img src="' + item.imagePath + '" class="img-responsive enemies" id="enemyImg-' + index + '" />';
-            $("#enemies").append(openTag + image + "<div>");
-        });
-        
+        $("#modal-list-container").append(characterDisplay);
+        $(".modal-footer").empty();
+        var button = '<button type="button" id="modal-submit" class="btn btn-success" style="display:none;" data-dismiss="modal">Select</button>';
+        $(".modal-footer").append(button);
     }
 
-    $("#characterSelect").on('click', '#char-0',  function() {
-        charNum = 0;
-        $(".characters").css("border-style", "none");
-        $("#charImg-0").css("border", "2px solid #4caf50 ");
-        $("#modal-submit").css("visibility", "visible");
-    });
-    $("#characterSelect").on('click', '#char-1',  function() {
-        charNum = 1;
-        $(".characters").css("border-style", "none");
-        $("#charImg-1").css("border", "2px solid #4caf50 ");
-        $("#modal-submit").css("visibility", "visible");
-    });
-    $("#characterSelect").on('click', '#char-2',  function() {
-        charNum = 2;
-        $(".characters").css("border-style", "none");
-        $("#charImg-2").css("border", "2px solid #4caf50 ");
-        $("#modal-submit").css("visibility", "visible");
-    });
-    $("#characterSelect").on('click', '#char-3',  function() {
-        charNum = 3;
-        $(".characters").css("border-style", "none");
-        $("#charImg-3").css("border", "2px solid #4caf50 ");
-        $("#modal-submit").css("visibility", "visible");
-    });
-    $("#characterSelect").on('click', '#modal-submit',  function() {
-        characterSelected = characterList[charNum];
-        characterSelected.chosen = true;
-        $("#selectCharacter").empty();
-        $("#character-image").attr("src", characterSelected.imagePath);
-        $("#selectCharacter").html("<img src='" + characterSelected.title + "'>");
-        $("#enemy-button").css("visibility", "visible");
-        $("#sec-heading").text("Now Choose Who You Will Battle!");
-        $("#sec-heading").css("color", "#ff0000");
-        removeCharacter();
-    });
+    function updateEnemyModal() {
+        $('.modal-header').text('Select your character!');
+        var characterDisplay = '';
+        enemyList.forEach( function(pokemon) {
+            characterDisplay += `<img class="pokemon-thumbnail enemy-thumbnail" src="${pokemon.imagePath}" data-name="${pokemon.name}">`    
+        })
+        $("#modal-list-container").empty();
+        $("#modal-list-container").append(characterDisplay);
+        $(".modal-footer").empty();
+        var button = '<button type="button" id="enemy-submit" class="btn btn-danger" style="display:none;" data-dismiss="modal">Select</button>';
+        $(".modal-footer").append(button);
+    }
 
-    $("#characterSelect").on('click', '#enemy-0',  function() {
-        enemNum = 0;
-        $(".enemies").css("border-style", "none");
-        $("#enemyImg-0").css("border", "2px solid #ff0000 ");
-        $("#enemy-button").css("visibility", "visible");
-    });
-    $("#characterSelect").on('click', '#enemy-1',  function() {
-        enemNum = 1;
-        $(".enemies").css("border-style", "none");
-        $("#enemyImg-1").css("border", "2px solid #ff0000 ");
-        $("#enemy-button").css("visibility", "visible");
-    });
-    $("#characterSelect").on('click', '#enemy-2',  function() {
-        console.log("here")
-        enemNum = 2;
-        $(".enemies").css("border-style", "none");
-        $("#enemyImg-2").css("border", "2px solid #ff0000 ");
-        $("#enemy-button").css("visibility", "visible");
-    });
+    function startDuel() {
+        updateStats();
+        updateEnemiesLeft();
+        $("#sec-heading").text("Duel!");
+        $("#attack-button").toggle();
+    }
+
+    function fight() {
+        yourPokemon.attackEnemy(enemyPokemon);
+            updateStats();
+            if(enemyPokemon.isAlive()) {
+                enemyPokemon.attackYou(yourPokemon);
+                updateStats();
+            } else {
+                enemyPokemon.hp = 0;
+                updateStats();
+                defeated.push(enemyPokemon);
+                updateCaptured();
+                $("#attack-button").toggle();
+                if(defeated.length === 3) {
+                    playAgain("Congratulations! You have defeated all enemies!");
+                } else {
+                    $("#enemy-button").toggle();
+                    $("#enemy-name").css("visibility", "hidden");
+                    $("#enemy-image").attr("src", "http://via.placeholder.com/200x200");     
+                }    
+            }
+            if(!yourPokemon.isAlive()) {
+                playAgain("Better luck next time!");
+            }
+    }
+
+    function playAgain(message) {
+        $("#modal-footer").empty();
+        $(".modal-footer").append(`
+            <button type="button" id="yes" class="btn btn-success" style="display: inline;" data-dismiss="modal">Yes</button>
+            <button type="button" id="no" class="btn btn-danger" style="display: inline;" data-dismiss="modal">No</button>
+        `);
+        $("#outcome").text(message);
+        $("#playAgain").modal('show')
+    }
+
+    function updateStats() {
+        $("#currentCharHP").text(yourPokemon.hp);
+        $("#currentCharAttack").text(yourPokemon.attack);
+        
+        $("#currentEnemyHP").text(enemyPokemon.hp);
+        $("#currentEnemyAttack").text(enemyPokemon.attack);
+    }
+
+    function updateCaptured() {
+        $(".capturedList").empty();
+        var html = "";
+        defeated.forEach(function(pokemon) {
+            html += `<li class="list-group-item float-left" style="border-style:none;">
+                        <img class="captured" src="${pokemon.imagePath}">
+                    </li>`
+        })
+        $(".capturedList").append(html);
+    }
+
+    function updateEnemiesLeft() {
+        $(".enemiesLeft").empty();
+        var html = "";
+        enemyList.forEach(function(pokemon) {
+            html += `<li class="list-group-item float-left" style="border-style:none;">
+                        <img class="captured" src="${pokemon.imagePath}">
+                    </li>`
+        })
+        $(".enemiesLeft").append(html);
+    }
+
     
-    $("#characterSelect").on('click', '#enemy-button',  function() {
-        enemySelected = modalList[enemNum];
-        enemySelected.chosen = true;
-        $("#selectEnemy").empty();
-        $("#enemy-image").attr("src", enemySelected.imagePath);
-        $("#selectEnemy").html("<img src='" + enemySelected.title + "'>");
-        $("#enemy-button").css("visibility", "visible");
-        $("#sec-heading").text("");
-        $("#attack-button").css("visibility", "visible");
-        removeCharacter();
-       
-    });
 
-    $(document).on('click', '#attack-button', function() {
-        characterSelected.attack(enemySelected);
-    })
-});
-    
+    function clickEvents() {
 
+        var selectedCharacter = "";
+        var selectedEnemy = "";
+        
+        $(document).on("click", "#player", function() {
+            updateFriendlyModal();
+        })
+
+        $(document).on("click", "#enemy-button",function() {
+            updateEnemyModal();
+        })
+
+        $(document).on("click", ".pokemon-thumbnail", function() {
+            selectedCharacter = $(this).attr("data-name");
+            $("#modal-submit").show();
+        })
+
+        $(document).on("click", ".enemy-thumbnail", function() {
+            selectedEnemy = $(this).attr("data-name");
+            $("#enemy-submit").show();
+        })
+
+        $(document).on("click", "#modal-submit", function() {
+            
+            yourPokemon = characterList.find(function(pokemon) {
+                return selectedCharacter === pokemon.name;
+            })
+            
+            enemyList = characterList.filter(function(pokemon) {
+                return selectedCharacter !== pokemon.name;
+            })
+            $("#character-name").attr("src", yourPokemon.nameTag);
+            $("#character-name").css("visibility", "visible");
+            $("#player-image").attr("src", yourPokemon.imagePath);
+            $("#player").toggle();
+            $("#enemy-button").toggle();
+
+        })
+
+        $(document).on("click", "#enemy-submit", function() {
+            enemyPokemon = characterList.find(function(pokemon) {
+                return selectedEnemy === pokemon.name;
+            })
+            
+            enemyList = enemyList.filter(function(pokemon) {
+                return selectedEnemy !== pokemon.name;
+            })
+            
+            $("#enemy-name").attr("src", enemyPokemon.nameTag);
+            $("#enemy-name").css("visibility", "visible");
+            $("#enemy-image").attr("src", enemyPokemon.imagePath);
+            $("#enemy-button").toggle();
+            startDuel();
+        })
+
+        $(document).on("click", "#attack-button", function() {
+            fight();
+        })
+
+        $(document).on("click", "#yes", resetGame);
+    }
+
+    clickEvents();
+    resetGame();

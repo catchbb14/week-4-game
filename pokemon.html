@@ -18,38 +18,59 @@
     <div class="modal fade" id="characterSelect" tabindex="-1" role="dialog" aria-labelledby="characterSelectCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modal-title"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="container-fluid" id="modal-list-container">
-                    <div class="row" id="row-0"></div>
-                    <br>
-                    <div class="row" id="row-1"></div>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid text-center" id="modal-list-container">
+                    </div>
+                </div>
+                <div class="modal-footer" id="modal-footer">
+                    <button type="button" id="modal-submit" class="btn btn-success" style="display:none;" data-dismiss="modal">Select</button>
                 </div>
             </div>
-            <div class="modal-footer" id="modal-footer">
-                <button type="button" id="modal-submit" class="btn btn-success" style="visibility: hidden;" data-dismiss="modal">Select</button>
-            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="playAgain" tabindex="-1" role="dialog" aria-labelledby="playAgain" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-title">Do you want to play again?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid text-center" id="modal-list-container">
+                        <h2 id="outcome"></h2>
+                        <br><br>
+                        <h2>Play again?</h2>
+                    </div>
+                </div>
+                <div class="modal-footer" id="modal-footer">
+                    <button type="button" id="yes" class="btn btn-success" style="display: inline;" data-dismiss="modal">Yes</button>
+                    <button type="button" id="no" class="btn btn-danger" style="display: inline;" data-dismiss="modal">No</button>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="container">
-        <h1 class="main-heading text-center">Pokemon Game</h1>
+        <div class="header mt-3 mb-5"><h1 class="main-heading text-center">Pokemon Game</h1></div>
         <div class="row row-eq-height">
             <div class="col-4 character">
                 <div class="image-container text-center">
+                    <img class="character-image" id="player-image" src="http://via.placeholder.com/200x200" style="width: 200px; height: 200px">
                     <img class="character-title" id="character-name" src=""></h2>
-                    <img class="character-image" id="character-image" src="http://via.placeholder.com/200x200" style="width: 200px; height: 200px">
                 </div>
                 <div class="button-container text-center">
                     <br>
                     <div id="selectCharacter">
-                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#characterSelect">
+                        <button type="button" id="player" class="btn btn-success" style="display:none;" data-toggle="modal" data-target="#characterSelect">
                                 Select Character
                         </button>
                     </div>
@@ -60,22 +81,23 @@
 
             <div class="col-4 middle">
                 <div class="container text-center">
-                    <h2 id="sec-heading" style="color:#4caf50">Please Select Your Character!</h2>
+                    <h2 id="sec-heading" style="color:#4caf50"></h2>
                     <div id="button-container" class="align-text-bottom">
-                        <button type="button" class="btn btn-warning" id="attack-button" style="visibility:hidden;">Attack!</button>
+                        <button type="button" class="btn btn-warning btn-lg" id="attack-button" style="display:none;">Attack!</button>
                     </div>
                 </div>
             </div>
 
             <div class="col-4 enemy">
                 <div class="image-container text-center">
-                    <h2 class="text-center character-title" id="enemy-name"></h2>
+                    <h2 class="text-center character-title"></h2>
                     <img class="mx-auto character-image" id="enemy-image" src="http://via.placeholder.com/200x200" style="width: 200px; height: 200px">
+                    <img class="character-title" id="enemy-name" src=""></h2>
                 </div>
                 <div class="button-container text-center">
                     <br>
                     <div id="selectEnemy">
-                        <button type="button" class="btn btn-danger" id ="enemy-button" data-toggle="modal" data-target="#characterSelect" style="visibility: hidden;" >
+                        <button type="button" class="btn btn-danger" id ="enemy-button" data-toggle="modal" data-target="#characterSelect" style="display: none;" >
                                 Select Enemy
                         </button>
                     </div>
@@ -88,13 +110,13 @@
         <div class="row">
             <div class="col-6">
                 <div class="character-text-container">
-                    <h3>HP: <span id="currentCharHP"></span>   <span id="characterDamage"></span></h3>
-                    <h3>Attack: <span id="charAttack"></span></h3>
+                    <h3>HP:      <span id="currentCharHP"></span></h3>
+                    <h3>Attack:  <span id="currentCharAttack"></span></h3>
                 </div>
-                <div class="card">
-                    <div class="card-header">Enemies Captured</div>
+                <div class="card mt-4">
+                    <div class="card-header text-center p-2"><h5>Enemies Captured</h5></div>
                     <div class="card-body">
-                        <ul class="list-inline text-center">
+                        <ul class="list-inline text-center capturedList">
                             
                         </ul>
                     </div>
@@ -102,13 +124,13 @@
             </div>
             <div class="col-6">
                 <div class="enemy-text-container">
-                    <h3>HP: <span id="currentCharHP"></span>   <span id="characterDamage"></span></h3>
-                    <h3>Attack: <span id="charAttack"></span></h3>
+                    <h3>HP:      <span id="currentEnemyHP"></span></h3>
+                    <h3>Attack:  <span id="currentEnemyAttack"></span></h3>
                 </div>
-                <div class="card">
-                    <div class="card-header">Enemies Left:</div>
+                <div class="card mt-4">
+                    <div class="card-header text-center p-2"><h5>Enemies Left:</h5></div>
                     <div class="card-body">
-                        <ul class="list-inline text-center">
+                        <ul class="list-inline text-center enemiesLeft">
                             
                         </ul>
                     </div>
